@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no,email=no,address=no">
+  <title>Feed Alegre — LUMARI</title>
+  <meta name="description" content="Conteúdos vibrantes e positivos personalizados para seu estado emocional.">
+  <meta name="theme-color" content="#7c4dff">
+  <link rel="icon" href="../logo/logo.jpg">
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    .feed-wrap{max-width:1200px;margin:0 auto;padding-top:20px}
+    .feed-header{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      margin-bottom:20px;
+      justify-content:center;
+      text-align:center;
+    }
+    .feed-logo{
+      width:64px;
+      height:64px;
+      border-radius:16px;
+      object-fit:cover;
+      box-shadow:0 8px 32px rgba(124,77,255,0.4);
+      border:3px solid rgba(124,77,255,0.3);
+    }
+    .feed-grid{
+      display:grid;
+      gap:24px;
+      margin-top:32px;
+    }
+    @media(min-width:768px){.feed-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(min-width:1200px){.feed-grid{grid-template-columns:repeat(3,1fr)}}
+    
+    .feed-card{
+      background:linear-gradient(145deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03));
+      border:1px solid rgba(255,255,255,0.15);
+      border-radius:20px;
+      overflow:hidden;
+      box-shadow:0 16px 64px rgba(0,0,0,0.8);
+      transition:all .4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      position:relative;
+    }
+    .feed-card:hover{
+      transform:translateY(-12px) scale(1.03);
+      box-shadow:0 32px 80px rgba(124,77,255,0.3);
+      border-color:rgba(124,77,255,0.4);
+    }
+    
+    .card-media{
+      position:relative;
+      height:220px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+    .card-media.video{
+      background:linear-gradient(135deg,#ff6b6b 0%,#ee5a52 40%,#ff9ff3 100%);
+    }
+    .card-media.text{
+      background:linear-gradient(135deg,#4facfe 0%,#00f2fe 40%,#43e97b 100%);
+    }
+    
+    .play-button{
+      width:90px;
+      height:90px;
+      background:rgba(255,255,255,0.95);
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:36px;
+      color:#333;
+      cursor:pointer;
+      transition:all .3s;
+      box-shadow:0 12px 40px rgba(0,0,0,0.4);
+    }
+    .play-button:hover{
+      transform:scale(1.2);
+      background:rgba(255,255,255,1);
+      box-shadow:0 16px 50px rgba(124,77,255,0.3);
+    }
+    
+    .text-icon{
+      font-size:72px;
+      color:rgba(255,255,255,0.9);
+      text-shadow:0 6px 20px rgba(0,0,0,0.4);
+    }
+    
+    .card-content{padding:24px}
+    .card-header{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .network-logo{
+      width:36px;
+      height:36px;
+      border-radius:8px;
+      object-fit:cover;
+      border:2px solid rgba(255,255,255,0.2);
+      box-shadow:0 4px 12px rgba(0,0,0,0.3);
+    }
+    .network-name{
+      font-size:15px;
+      color:var(--accent-2);
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:0.5px;
+    }
+    .card-title{
+      margin:0 0 12px 0;
+      font-size:20px;
+      font-weight:800;
+      color:#fff;
+      line-height:1.3;
+    }
+    .card-text{
+      margin:0 0 16px 0;
+      font-size:15px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+    .card-author{
+      font-size:14px;
+      color:var(--accent-2);
+      margin-bottom:20px;
+      font-weight:600;
+    }
+    .card-stats{
+      display:flex;
+      gap:20px;
+      font-size:13px;
+      color:var(--muted);
+      flex-wrap:wrap;
+    }
+    .card-stats span{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-weight:600;
+    }
+    
+    .filter-bar{
+      display:flex;
+      gap:16px;
+      flex-wrap:wrap;
+      margin:28px 0;
+      padding:20px;
+      background:rgba(255,255,255,0.05);
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,0.1);
+      justify-content:center;
+    }
+    .filter-btn{
+      padding:16px 28px;
+      border-radius:15px;
+      border:2px solid rgba(124,77,255,0.5);
+      background:rgba(124,77,255,0.15);
+      color:#fff;
+      font-size:15px;
+      font-weight:700;
+      cursor:pointer;
+      transition:all .3s;
+      text-transform:uppercase;
+      letter-spacing:0.5px;
+    }
+    .filter-btn.active{
+      background:rgba(124,77,255,0.4);
+      border-color:rgba(124,77,255,0.8);
+      transform:scale(1.08);
+      box-shadow:0 8px 25px rgba(124,77,255,0.3);
+    }
+    .filter-btn:hover{
+      background:rgba(124,77,255,0.25);
+      transform:scale(1.05);
+    }
+    
+    .back-moods{
+      margin:20px 0;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      font-size:16px;
+      color:var(--accent-2);
+      text-decoration:none;
+      padding:16px 24px;
+      border-radius:15px;
+      background:rgba(124,77,255,0.2);
+      transition:all .3s;
+      font-weight:700;
+      border:2px solid rgba(124,77,255,0.3);
+    }
+    .back-moods:hover{
+      background:rgba(124,77,255,0.35);
+      transform:translateX(-6px);
+      box-shadow:0 8px 25px rgba(124,77,255,0.2);
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Pular para conteúdo</a>
+  <header class="topbar" role="banner" aria-label="Barra de navegação">
+    <div class="topbar-inner">
+      <a href="../index.html" class="brand-mini" aria-label="LUMARI home">
+        <img src="../logo/logo.jpg" alt="Logo LUMARI" class="logo-mini">
+      </a>
+      <nav class="nav" role="navigation" aria-label="Menu principal">
+        <a href="about.html">Quem somos?</a>
+        <a href="features.html">Funcionalidades</a>
+        <a href="credits.html">Créditos</a>
+      </nav>
+    </div>
+  </header>
+  <button id="audioToggle" class="audio-toggle" aria-pressed="false" aria-label="Ativar som">🔊</button>
+  <main id="main" class="container">
+    <section class="intro feed-wrap">
+      <div class="feed-header">
+  <img src="../logo/logo.jpg" alt="Logo LUMARI" class="feed-logo">
+        <div>
+          <h1 style="margin:0;font-size:36px;color:#fff;font-weight:800">🌞 Feed Alegre</h1>
+          <p style="color:var(--muted);margin:8px 0 0;font-size:18px;font-weight:500">Conteúdos vibrantes para elevar seu humor</p>
+        </div>
+      </div>
+      <a class="back-moods" href="home-public.html?force=1">← Escolher outra emoção</a>
+      <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" data-filter="all">📱 Todos</button>
+        <button class="filter-btn" data-filter="video">🎥 Vídeos</button>
+        <button class="filter-btn" data-filter="text">📝 Posts</button>
+      </div>
+      <div class="feed-grid" id="feedList"></div>
+    </section>
+  </main>
+  <script defer src="../js/main.js"></script>
+  <script>
+    // Inicialização resiliente: permite execução tanto em carregamento completo quanto após injeção PJAX
+    (function(){
+    const FEED = [
+      // Coerência aproximada: likes ~5-10% views (vídeos), replies ~8-15% dos likes (threads), retweets/shares ~25-40% likes.
+      { 
+        type: 'video', 
+        network: 'YouTube', 
+        logo: '../logo/youtube-logo.jpg',
+        title: '"Como Transformei Minha Vida em 30 Dias"', 
+        text: 'Canal MotivaBrasil compartilha jornada inspiradora de transformação pessoal que já alcançou milhões de pessoas. Um relato emocionante sobre superação, disciplina e como pequenas mudanças diárias podem gerar resultados extraordinários.',
+        author: '@MotivaBrasil',
+        duration: '12:45',
+  views: '2.1M', // base
+  likes: '126K' // ~6% de 2.1M
+      },
+      { 
+        type: 'video', 
+        network: 'Instagram', 
+        logo: '../logo/instagram-logo.jpg',
+        title: 'Reels: Praias do Nordeste que Você PRECISA Conhecer', 
+        text: 'Influencer @ViagemBrasil revela paraísos escondidos com paisagens de tirar o fôlego e águas cristalinas. Descubra destinos incríveis que vão te fazer querer arrumar as malas agora mesmo!',
+        author: '@ViagemBrasil',
+        duration: '0:45',
+  views: '456K',
+  likes: '30.7K' // ~6.7%
+      },
+      { 
+        type: 'video', 
+        network: 'TikTok', 
+        logo: '../logo/tiktok-logo.jpg',
+        title: 'Dance Challenge: #AlegreVibes', 
+        text: 'Coreografia viral criada por @DanceFun que está sendo reproduzida por milhares de usuários ao redor do mundo. Uma dança contagiante que espalha alegria e boas vibrações por toda parte!',
+        author: '@DanceFun',
+        duration: '0:30',
+  views: '3.8M',
+  likes: '266K' // ~7%
+      },
+      { 
+        type: 'text', 
+        network: 'Twitter/X', 
+        logo: '../logo/twitter-X-logo.jpg',
+        title: 'Thread: "Pequenas vitórias que mudaram meu ano"', 
+        text: 'Usuária @SucessoReal compartilha conquistas diárias que geraram uma grande transformação pessoal e profissional. Um relato tocante sobre como celebrar pequenos avanços pode mudar completamente nossa perspectiva de vida.',
+        author: '@SucessoReal',
+  replies: '4.1K', // ~11% dos likes
+  retweets: '13.6K', // ~40% dos likes
+  likes: '36.8K'
+      },
+      { 
+        type: 'video', 
+        network: 'Twitch', 
+        logo: '../logo/twitch-logo.jpg',
+        title: 'Live: Minecraft - Construindo a Cidade dos Sonhos', 
+        text: 'Streamer @BuildMaster constrói projeto colaborativo épico com participação ativa do chat em atmosfera super positiva. Uma experiência única onde criatividade e comunidade se unem para criar algo extraordinário!',
+        author: '@BuildMaster',
+  viewers: '8.4K', // coerente para live média
+        duration: 'AO VIVO'
+      },
+      { 
+        type: 'text', 
+        network: 'Facebook', 
+        logo: '../logo/facebook-logo.jpg',
+        title: 'Grupo: "Boas Notícias do Brasil" - Ação Solidária', 
+        text: 'Comunidade mobiliza campanha que já arrecadou mais de 50 toneladas de alimentos para famílias em vulnerabilidade. Um exemplo inspirador de como as redes sociais podem ser uma força para o bem e transformação social.',
+        author: 'Boas Notícias Brasil',
+  members: '234K',
+  likes: '3.2K', // ~1.4% members
+  shares: '1.1K' // ~34% likes
+      },
+      {
+        type: 'video',
+        network: 'YouTube',
+        logo: '../logo/youtube-logo.jpg',
+        title: 'Documentário Curto: "Alegria em Pequenos Gestos"',
+        text: 'Mini doc reúne histórias reais de pessoas que transformaram o dia de desconhecidos com atitudes simples e positivas.',
+        author: '@ImpactoPositivo',
+        duration: '9:12',
+        views: '987K',
+        likes: '41K'
+      },
+      {
+        type: 'text',
+        network: 'Instagram',
+        logo: '../logo/instagram-logo.jpg',
+        title: 'Carrossel: "7 Razões para Sorrir Hoje"',
+        text: 'Sequência visual com mensagens curtas que estimulam gratidão diária, viralizando em comunidades de bem-estar.',
+        author: '@VivaLeve',
+        replies: '1.1K',
+        retweets: '3.4K',
+        likes: '28.6K'
+      },
+      {
+        type: 'video',
+        network: 'TikTok',
+        logo: '../logo/tiktok-logo.jpg',
+        title: 'Transição Criativa: Antes e Depois do Meu Jardim',
+        text: 'Vídeo rápido mostra evolução de um jardim urbano em 60 dias com cortes sincronizados em música upbeat.',
+        author: '@VerdeEmCasa',
+        duration: '0:38',
+        views: '2.6M',
+        likes: '301K'
+      },
+      {
+        type: 'text',
+        network: 'Twitter/X',
+        logo: '../logo/twitter-X-logo.jpg',
+        title: 'Tweet: "Hoje decidi elogiar estranhos…"',
+        text: 'Thread cresce rapidamente reunindo respostas sobre reações emocionantes após gestos espontâneos de gentileza.',
+        author: '@GentilezaReal',
+        replies: '4.2K',
+        retweets: '12.8K',
+        likes: '54.7K'
+      },
+      {
+        type: 'video',
+        network: 'Twitch',
+        logo: '../logo/twitch-logo.jpg',
+        title: 'Live Especial: Música Ao Vivo com Chat Interativo',
+        text: 'Cantor independente cria músicas improvisadas usando palavras enviadas pelo chat em tempo real.',
+        author: '@FlowAcustico',
+        viewers: '6.4K',
+        duration: 'AO VIVO'
+      },
+      {
+        type: 'text',
+        network: 'Facebook',
+        logo: '../logo/facebook-logo.jpg',
+        title: 'Post: Campanha de Doação de Livros',
+        text: 'Movimento comunitário organiza arrecadação para bibliotecas de escolas públicas interioranas.',
+        author: 'Leitura para Todos',
+        members: '48K',
+        likes: '2.3K',
+        shares: '740'
+      }
+    ];
+    let currentFilter = 'all';
+    function render(){
+      const wrap = document.getElementById('feedList');
+      if (!wrap) return;
+      const filtered = FEED.filter(item => currentFilter === 'all' || item.type === currentFilter);
+      wrap.innerHTML = filtered.map(item => {
+        const isVideo = item.type === 'video';
+        
+        const fm = (v)=> (window.formatMetric ? window.formatMetric(v) : v);
+        let stats = '';
+        if (isVideo) {
+          stats = `
+            <span>👁️ ${fm(item.views || item.viewers)}</span>
+            <span>❤️ ${fm(item.likes)}</span>
+            <span>⏱️ ${item.duration}</span>
+          `;
+        } else {
+          stats = `
+            <span>💬 ${fm(item.replies || item.members)}</span>
+            <span>🔄 ${fm(item.retweets || item.shares)}</span>
+            <span>❤️ ${fm(item.likes)}</span>
+          `;
+        }
+        
+        return `
+          <article class="feed-card" data-type="${item.type}">
+            <div class="card-media ${item.type}">
+              ${isVideo ? 
+                '<div class="play-button">▶</div>' : 
+                '<div class="text-icon">💬</div>'
+              }
+            </div>
+            <div class="card-content">
+              <div class="card-header">
+                <img src="${item.logo}" alt="${item.network}" class="network-logo" loading="lazy" data-fallback-logo>
+                <span class="network-name">${item.network}</span>
+              </div>
+              <h3 class="card-title">${item.title}</h3>
+              <p class="card-text">${item.text}</p>
+              <div class="card-author">${item.author}</div>
+              <div class="card-stats">${stats}</div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+    function initFeed(){
+      render();
+      document.querySelectorAll('img[data-fallback-logo]').forEach(img=>{
+        if(img.dataset.fallbackBound) return; img.dataset.fallbackBound='1';
+        img.addEventListener('error', ()=>{ img.classList.add('img-fallback'); });
+      });
+      const buttons = document.querySelectorAll('.filter-btn');
+      if(!buttons.length) return; // já inicializado ou HTML não presente
+      buttons.forEach(btn=>{
+        if(btn.dataset.feedInited) return;
+        btn.dataset.feedInited = '1';
+        btn.addEventListener('click', ()=>{
+          document.querySelectorAll('.filter-btn').forEach(b=> b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.dataset.filter;
+          render();
+        });
+      });
+    }
+    // Caso carregado normalmente
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', initFeed, {once:true});
+    } else {
+      initFeed();
+    }
+    // Caso PJAX: o main.js substitui apenas o conteúdo de <main>, este script é reinserido e executa init imediatamente
+    })();
+  </script>
+</body>
+</html>

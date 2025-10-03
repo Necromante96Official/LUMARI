@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no,email=no,address=no">
+  <title>LUMARI — Neuromarketing Emocional</title>
+  <meta name="description" content="LUMARI — Plataforma de neuromarketing emocional que analisa emoções em conteúdos digitais para recomendações personalizadas e métricas avançadas.">
+  <meta name="theme-color" content="#7c4dff">
+  <link rel="icon" href="logo/logo.jpg">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a href="#main" class="skip-link">Pular para conteúdo</a>
+  <header class="topbar" role="banner" aria-label="Barra de navegação">
+    <div class="topbar-inner">
+      <a href="index.html" class="brand-mini" aria-label="LUMARI home">
+        <img src="logo/logo.jpg" alt="LUMARI" class="logo-mini">
+      </a>
+      <nav class="nav" role="navigation" aria-label="Menu principal">
+      <a href="pages/about.html">Quem somos?</a>
+      <a href="pages/features.html">Funcionalidades</a>
+      <a href="pages/credits.html">Créditos</a>
+        </nav>
+    </div>
+  </header>
+  
+  <!-- Botão de controle de áudio (top-left). O elemento <audio> é criado dinamicamente por js/main.js para garantir um único player persistente -->
+  <button id="audioToggle" class="audio-toggle" aria-pressed="false" aria-label="Ativar som">🔊</button>
+  <main id="main" class="container">
+    <header class="brand">
+  <img src="logo/logo.jpg" alt="Logo LUMARI" class="logo">
+  <h1 class="site-name">LUMARI</h1>
+    </header>
+
+    <section class="intro">
+      <h2>Plataforma baseada em Neuromarketing</h2>
+  <p>O LUMARI reconhece emoções através de voz e expressões faciais durante o consumo de conteúdo digital, recomendando conteúdos personalizados para uma experiência emocionalmente relevante.</p>
+  <p class="muted">Acesse como público geral para receber recomendações, ou como criador de conteúdo (assinatura) para métricas emocionais avançadas.</p>
+    </section>
+
+    <section class="access-grid" role="navigation" aria-label="Escolha de acesso">
+  <a href="pages/login.html?role=public" class="access-card btn" id="publicCard">
+        <div class="card-inner">
+          <h3>Entrar como Público Geral</h3>
+          <p>Acesse sua conta para receber recomendações personalizadas baseadas nas suas emoções.</p>
+        </div>
+      </a>
+
+  <a href="pages/login.html?role=creator" class="access-card creator btn" id="creatorCard">
+        <div class="card-inner">
+          <h3>Entrar como Criador de Conteúdo</h3>
+          <p>Assinantes acessam métricas emocionais dos seguidores e recomendações estratégicas.</p>
+        </div>
+      </a>
+    </section>
+
+    <section class="intro" id="suggestions-section" aria-labelledby="suggestionsTitle">
+      <h2 id="suggestionsTitle">💡 Sugestões</h2>
+      <p>Tem uma ideia de melhoria, recurso ou ajuste que deixaria a experiência mais útil? Envie uma sugestão rápida. Não pedimos dados sensíveis — apenas seu e-mail (opcional) e a descrição do que gostaria de ver.</p>
+      <button id="openSuggestion" class="btn">Enviar sugestão</button>
+  <p id="suggestionThanks" role="status" aria-live="polite" style="display:none;opacity:0;transition:opacity .35s">✅ Obrigado! Sua sugestão foi registrada.</p>
+    </section>
+
+    <footer class="footer">
+      <p>&copy; <span id="year"></span> LUMARI — Plataforma de Neuromarketing Emocional</p>
+  <p class="authors">Autores: Júlia Silva, Lucas Tavares, Maluana Amaral, Muriel Rosa & Copilot GitHub</p>
+    </footer>
+  </main>
+
+  <script src="js/main.js" defer></script>
+  <script>
+    // Modal de sugestões leve (usa estilos de modal já existentes em main.css via classes reutilizadas)
+    (function(){
+      const btn = document.getElementById('openSuggestion');
+      if(!btn) return;
+      function ensureStore(){ try{ if(!localStorage.getItem('lumari_suggestions')) localStorage.setItem('lumari_suggestions','[]'); }catch(e){} }
+      function saveSuggestion(obj){
+        try{
+          ensureStore();
+          const list = JSON.parse(localStorage.getItem('lumari_suggestions')||'[]');
+          list.push(obj);
+          localStorage.setItem('lumari_suggestions', JSON.stringify(list));
+        }catch(e){}
+      }
+      function closeModal(modal){ modal.classList.remove('show'); setTimeout(()=>{ try{ modal.remove(); }catch(e){} }, 260); }
+      function openModal(){
+        try{ if(window.lumariPlayClick) window.lumariPlayClick(); }catch(e){}
+        if(document.getElementById('suggestionModal')) return;
+        const modal = document.createElement('div');
+        modal.id = 'suggestionModal';
+        modal.className = 'modal-backdrop show';
+        const card = document.createElement('div');
+        card.className = 'modal-card';
+        card.innerHTML = `
+          <div class="modal-header">
+            <div class="modal-title">Enviar Sugestão</div>
+          </div>
+          <div class="modal-body">
+            <p style="margin-top:0;color:var(--text)">Compartilhe uma ideia, melhoria ou recurso que você gostaria de ver na LUMARI.</p>
+            <form id="suggestionForm" class="form-grid" style="display:grid;gap:14px">
+              <div class="form-field">
+                <label for="sEmail">Seu e-mail (opcional)</label>
+                <input id="sEmail" type="email" placeholder="voce@email.com" autocomplete="email" />
+              </div>
+              <div class="form-field">
+                <label for="sText">Descrição da sugestão *</label>
+                <textarea id="sText" required placeholder="Ex.: Seria legal ter modo escuro automático..." style="min-height:120px;padding:12px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.16);border-radius:10px;color:#fff;font-family:inherit;resize:vertical"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-actions" style="justify-content:space-between">
+            <button type="button" class="btn btn-decline" id="cancelSuggestion">Cancelar</button>
+            <button type="submit" form="suggestionForm" class="btn btn-accept" id="submitSuggestion">Enviar</button>
+          </div>
+        `;
+        modal.appendChild(card);
+        document.body.appendChild(modal);
+        const form = card.querySelector('#suggestionForm');
+        const cancel = card.querySelector('#cancelSuggestion');
+        cancel.addEventListener('click', ()=> closeModal(modal));
+        form.addEventListener('submit', (e)=>{
+          e.preventDefault();
+          try{ if(window.lumariPlayClick) window.lumariPlayClick(); }catch(e){}
+          const email = (card.querySelector('#sEmail').value||'').trim();
+          const text = (card.querySelector('#sText').value||'').trim();
+          if(!text){ card.querySelector('#sText').focus(); return; }
+          saveSuggestion({ email, text, ts: Date.now() });
+          closeModal(modal);
+          const thanks = document.getElementById('suggestionThanks');
+          if(thanks){
+            thanks.style.display='block';
+            // Forçar reflow para aplicar transição
+            void thanks.offsetWidth;
+            thanks.style.opacity='1';
+            thanks.textContent='✅ Obrigado! Sua sugestão foi registrada.';
+            // Garantir que o usuário veja (caso esteja fora do viewport)
+            try{ thanks.scrollIntoView({behavior:'smooth', block:'center'}); }catch(err){}
+            // Fade out após 6s
+            setTimeout(()=>{ thanks.style.opacity='0'; }, 5600);
+            setTimeout(()=>{ if(thanks.style.opacity==='0') thanks.style.display='none'; }, 6200);
+          } else {
+            // Fallback emergencial
+            alert('Obrigado! Sua sugestão foi registrada.');
+          }
+        });
+      }
+      btn.addEventListener('click', openModal);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no,email=no,address=no">
+  <title>Início — Público Geral — LUMARI</title>
+  <meta name="description" content="Selecione seu estado emocional para receber um feed personalizado na LUMARI.">
+  <meta name="theme-color" content="#7c4dff">
+  <link rel="icon" href="../logo/logo.jpg">
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    .home-wrap{max-width:900px;margin:0 auto}
+    .mood-title{font-weight:800;color:#fff;margin:10px 0}
+    .mood-grid{display:grid;gap:14px;margin-top:16px}
+  .mood-option{display:flex;gap:10px;align-items:center;justify-content:center;padding:18px;border-radius:16px;border:1px solid rgba(124,77,255,0.25);background:linear-gradient(180deg, rgba(124,77,255,0.10), rgba(94,60,255,0.08));cursor:pointer;transition:transform .12s ease, box-shadow .18s, filter .2s; box-shadow: 0 8px 24px rgba(0,0,0,0.45); color:#fff; font-weight:600; font-size:16px;}
+  .mood-option .emoji{font-size:18px}
+  .mood-option:hover{filter:brightness(1.08); transform: translateY(-4px); box-shadow: 0 22px 60px rgba(94,60,255,0.28)}
+    .mood-option:active{transform:translateY(0) scale(.98)}
+    .mood-option.active{outline:3px solid rgba(124,77,255,0.35)}
+    @media(min-width:700px){.mood-grid{grid-template-columns:repeat(3,1fr)}}
+    .top-actions{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Pular para conteúdo</a>
+  <header class="topbar" role="banner" aria-label="Barra de navegação">
+    <div class="topbar-inner">
+      <a href="../index.html" class="brand-mini" aria-label="LUMARI home">
+        <img src="../logo/logo.jpg" alt="LUMARI" class="logo-mini">
+      </a>
+  <nav class="nav" role="navigation" aria-label="Menu principal">
+    <a href="about.html">Quem somos?</a>
+  <a href="features.html">Funcionalidades</a>
+  <a href="credits.html">Créditos</a>
+  </nav>
+    </div>
+  </header>
+
+  <button id="audioToggle" class="audio-toggle" aria-pressed="false" aria-label="Ativar som">🔊</button>
+
+  <main id="main" class="container">
+    <section class="intro home-wrap">
+      <div class="top-actions">
+        <h1>Bem-vindo(a), <span id="userName" style="display:none">Usuário</span></h1>
+  <a href="../index.html" id="logoutBtn" class="btn" style="padding:8px 12px">Sair</a>
+      </div>
+  <p class="mood-title">Como você está se sentindo hoje?</p>
+      <div class="mood-grid">
+  <button class="mood-option" data-mood="alegre"><span class="emoji">😊</span> Alegre</button>
+  <button class="mood-option" data-mood="triste"><span class="emoji">😔</span> Triste</button>
+  <button class="mood-option" data-mood="outros"><span class="emoji">🤔</span> Outros</button>
+      </div>
+      <p id="moodMsg" class="muted" style="margin-top:12px"></p>
+    </section>
+  </main>
+
+  <script defer src="../js/main.js"></script>
+  <script>
+    // Reinicialização defensiva do áudio quando carregado diretamente (usa id real 'globalAudio')
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        try {
+          const audioRef = document.getElementById('globalAudio');
+          if (audioRef && audioRef.paused) {
+            audioRef.play().catch(() => {
+              audioRef.muted = true;
+              audioRef.play().catch(() => {});
+            });
+          }
+        } catch(e) {}
+      }, 200);
+    });
+    
+    (function(){
+      // garantir que o termo foi aceito antes de permitir uso
+      setTimeout(()=>{
+        try{ 
+          if(typeof window.ensureTermsAcceptedOrShow === 'function'){ 
+            const ok = window.ensureTermsAcceptedOrShow('public'); 
+            if(!ok) return; 
+
+          // Autoredirecionar se já existir emoção salva e não houver ?force=1
+          // ===== Persistência diária do humor =====
+          // Chaves: lumari_mood_value, lumari_mood_date (YYYY-MM-DD)
+          try{
+            const params = new URLSearchParams(location.search);
+            const force = params.get('force');
+            const today = new Date().toISOString().slice(0,10);
+            const savedMood = localStorage.getItem('lumari_mood_value');
+            const savedDate = localStorage.getItem('lumari_mood_date');
+            const moodToPage = { alegre: 'feed-alegre.html', triste: 'feed-triste.html', outros: 'feed-outros.html' };
+            if(force !== '1' && savedMood && savedDate === today && moodToPage[savedMood]){
+              if(window.pjaxLoad){ window.pjaxLoad(moodToPage[savedMood], true); }
+              else { location.href = moodToPage[savedMood]; }
+              return; // pular seleção se já respondeu hoje
+            }
+          }catch(e){}
+          } else {
+            // se utilitário não existir, cria o modal mínimo
+            if(typeof window.createTermsModal === 'function'){ window.createTermsModal('public'); return; }
+          } 
+        }catch(e){}
+        
+        function getUser(){ try{ return JSON.parse(localStorage.getItem('lumari_user')||'null'); }catch(e){ return null; } }
+        const u = getUser();
+        if(!u || u.role !== 'public'){
+          location.href = 'login.html?role=public';
+          return;
+        }
+        document.getElementById('userName').textContent = u.name || u.email || 'Você';
+        document.getElementById('userName').style.display = 'inline'; // mostrar após validação
+        document.querySelectorAll('.mood-option').forEach(btn=>{
+          btn.addEventListener('click', ()=>{
+            const mood = btn.dataset.mood;
+            try{
+              const today = new Date().toISOString().slice(0,10);
+              localStorage.setItem('lumari_mood_value', mood);
+              localStorage.setItem('lumari_mood_date', today);
+            }catch(e){}
+            const target = {
+              alegre: 'feed-alegre.html',
+              triste: 'feed-triste.html',
+              outros: 'feed-outros.html'
+            }[mood];
+            if(!target) return;
+            if(window.pjaxLoad){ window.pjaxLoad(target, true); }
+            else { location.href = target; }
+          });
+        });
+        document.getElementById('logoutBtn').addEventListener('click', (e)=>{ try{ localStorage.removeItem('lumari_user'); }catch(e){} });
+      }, 100);
+    })();
+  </script>
+</body>
+</html>

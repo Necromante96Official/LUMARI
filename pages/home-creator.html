@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no,email=no,address=no">
+  <title>Início — Criador — LUMARI</title>
+  <meta name="description" content="Painel emocional e métricas simuladas para criadores de conteúdo na LUMARI.">
+  <meta name="theme-color" content="#7c4dff">
+  <link rel="icon" href="../logo/logo.jpg">
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    .home-wrap{max-width:1000px;margin:0 auto}
+    .summary-grid{display:grid;gap:12px;margin-top:10px}
+    @media(min-width:800px){.summary-grid{grid-template-columns:repeat(3,1fr)}}
+    .summary-card{padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);background:linear-gradient(180deg,rgba(255,255,255,0.05),transparent)}
+    .summary-card .label{font-size:13px;color:#bbb;margin-bottom:4px}
+    .summary-card .value{font-size:22px;font-weight:800;color:#fff}
+    .metrics-grid{display:grid;gap:14px;margin-top:16px}
+    @media(min-width:800px){.metrics-grid{grid-template-columns:repeat(4,1fr)}}
+    .metric-card{padding:16px;border-radius:14px;border:1px solid rgba(255,255,255,0.08);background:linear-gradient(180deg,rgba(255,255,255,0.04),transparent)}
+    .metric-title{font-size:14px;color:#ddd;margin-bottom:8px}
+    .metric-value{font-size:28px;font-weight:800;color:#fff}
+    .metric-bar{height:8px;border-radius:999px;background:rgba(255,255,255,0.08);overflow:hidden;margin-top:8px}
+    .metric-fill{height:100%;width:0;background:linear-gradient(90deg, rgba(124,77,255,0.9), rgba(94,60,255,0.8));transition:width 0.6s ease}
+    .top-actions{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .mini-label{font-size:12px;color:#bbb}
+  .freq-select{padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.06);color:#fff}
+  .freq-group{display:flex;gap:8px;flex-wrap:wrap}
+  .small-btn.active{background:rgba(124,77,255,0.35);border-color:rgba(124,77,255,0.8)}
+    .networks-grid{display:grid;gap:12px;margin-top:14px}
+    @media(min-width:900px){.networks-grid{grid-template-columns:repeat(3,1fr)}}
+    .network-card{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);background:linear-gradient(180deg,rgba(255,255,255,0.04),transparent)}
+    .network-card img{width:36px;height:36px;border-radius:8px;object-fit:cover}
+    .network-info{flex:1}
+    .network-title{display:flex;align-items:center;gap:8px;font-weight:700}
+    .status{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,0.12);font-size:12px}
+    .dot{width:8px;height:8px;border-radius:50%}
+    .on{background:#38d39f}
+    .off{background:#d33838}
+    .trend{font-size:13px;color:#ddd;margin-top:6px}
+    .small-btn{padding:6px 8px;border-radius:10px;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.06);color:#fff;cursor:pointer}
+    .trends-panel{margin-top:16px;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);background:linear-gradient(180deg,rgba(255,255,255,0.04),transparent)}
+    .trends-list{display:grid;gap:8px;margin-top:8px}
+    .trend-item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06)}
+    .term{color:#eee;font-weight:700}
+    .trend-right{display:flex;align-items:center;gap:8px}
+    .trend-logos{display:flex;align-items:center;gap:6px}
+    .trend-logos img{width:18px;height:18px;border-radius:4px;object-fit:cover;box-shadow:0 1px 4px rgba(0,0,0,0.4)}
+    .volume{font-size:12px;color:#bbb;white-space:nowrap}
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Pular para conteúdo</a>
+  <header class="topbar" role="banner" aria-label="Barra de navegação">
+    <div class="topbar-inner">
+      <a href="../index.html" class="brand-mini" aria-label="LUMARI home">
+        <img src="../logo/logo.jpg" alt="LUMARI" class="logo-mini">
+      </a>
+  <nav class="nav" role="navigation" aria-label="Menu principal">
+    <a href="about.html">Quem somos?</a>
+  <a href="features.html">Funcionalidades</a>
+  <a href="credits.html">Créditos</a>
+  </nav>
+    </div>
+  </header>
+
+  <button id="audioToggle" class="audio-toggle" aria-pressed="false" aria-label="Ativar som">🔊</button>
+
+  <main id="main" class="container">
+    <section class="intro home-wrap">
+      <div class="top-actions">
+        <h1>Painel Emocional — <span id="userName" style="display:none">Criador</span></h1>
+        <div class="controls">
+          <span class="mini-label">Frequência de atualização</span>
+          <div class="freq-group" role="group" aria-label="Frequência de atualização">
+            <button class="small-btn freq-btn active" data-freq="realtime">Tempo real</button>
+            <button class="small-btn freq-btn" data-freq="60000">1 min</button>
+            <button class="small-btn freq-btn" data-freq="300000">5 min</button>
+            <button class="small-btn freq-btn" data-freq="1800000">30 min</button>
+            <button class="small-btn freq-btn" data-freq="3600000">1 h</button>
+          </div>
+          <a href="../index.html" id="logoutBtn" class="btn" style="padding:8px 12px">Sair</a>
+        </div>
+      </div>
+      <p class="muted">Métricas emocionais estimadas com base nas interações do público (mock para demonstração).</p>
+
+      <div class="summary-grid" aria-label="Resumo do criador">
+        <div class="summary-card">
+          <div class="label">Redes conectadas</div>
+          <div class="value"><span id="connectedCount">0</span> / 6</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Seguidores totais</div>
+          <div class="value"><span id="totalFollowers">0</span></div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Atualização</div>
+          <div class="value" id="freqLabel">Tempo real</div>
+        </div>
+      </div>
+
+      <div class="networks-grid" id="networksGrid" aria-label="Redes Sociais Integradas"></div>
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="metric-title">Atenção</div><div class="metric-value" id="m1v">0%</div><div class="metric-bar"><div class="metric-fill" id="m1"></div></div></div>
+        <div class="metric-card"><div class="metric-title">Alegria</div><div class="metric-value" id="m2v">0%</div><div class="metric-bar"><div class="metric-fill" id="m2"></div></div></div>
+        <div class="metric-card"><div class="metric-title">Surpresa</div><div class="metric-value" id="m3v">0%</div><div class="metric-bar"><div class="metric-fill" id="m3"></div></div></div>
+        <div class="metric-card"><div class="metric-title">Frustração</div><div class="metric-value" id="m4v">0%</div><div class="metric-bar"><div class="metric-fill" id="m4"></div></div></div>
+      </div>
+
+      <div class="trends-panel" aria-label="Tendências em tempo real">
+        <h3 style="margin:0 0 6px">Tendências em Tempo Real</h3>
+        <p class="muted" style="margin:0 0 8px">Principais termos e temas consumidos pela sua audiência neste momento.</p>
+        <div class="trends-list" id="trendsList"></div>
+      </div>
+    </section>
+  </main>
+
+  <script defer src="../js/main.js"></script>
+  <script>
+    // Reinicialização defensiva do áudio quando carregado diretamente (usa id real 'globalAudio')
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        try {
+          const audioRef = document.getElementById('globalAudio');
+          if (audioRef && audioRef.paused) {
+            audioRef.play().catch(() => {
+              audioRef.muted = true;
+              audioRef.play().catch(() => {});
+            });
+          }
+        } catch(e) {}
+      }, 200);
+    });
+    
+    (function(){
+      // garantir que o termo foi aceito antes de permitir uso
+      setTimeout(()=>{
+        try{ 
+          if(typeof window.ensureTermsAcceptedOrShow === 'function'){ 
+            const ok = window.ensureTermsAcceptedOrShow('creator'); 
+            if(!ok) return; 
+          } else {
+            if(typeof window.createTermsModal === 'function'){ window.createTermsModal('creator'); return; }
+          } 
+        }catch(e){}
+        
+        function getUser(){ try{ return JSON.parse(localStorage.getItem('lumari_user')||'null'); }catch(e){ return null; } }
+        const u = getUser();
+        if(!u || u.role !== 'creator'){
+          location.href = 'login.html?role=creator';
+          return;
+        }
+        document.getElementById('userName').textContent = u.name || u.email || 'Você';
+        document.getElementById('userName').style.display = 'inline'; // mostrar após validação
+
+        // ===== Redes sociais e estado simulado =====
+        const NETWORKS = [
+          {id:'facebook', name:'Facebook', logo:'../logo/facebook-logo.jpg'},
+          {id:'instagram', name:'Instagram', logo:'../logo/instagram-logo.jpg'},
+          {id:'tiktok', name:'TikTok', logo:'../logo/tiktok-logo.jpg'},
+          {id:'youtube', name:'YouTube', logo:'../logo/youtube-logo.jpg'},
+          {id:'twitch', name:'Twitch', logo:'../logo/twitch-logo.jpg'},
+          {id:'twitter', name:'Twitter (X)', logo:'../logo/twitter-X-logo.jpg'},
+        ];
+        // chave por usuário para dar variedade e persistir por perfil
+        const userKey = String(u.email || u.name || 'user').toLowerCase().replace(/[^a-z0-9]+/g,'-');
+        const LS_KEY = 'lumari_creator_networks_' + userKey;
+        const LS_FREQ = 'lumari_creator_freq_' + userKey;
+
+        // PRNG simples sementeado no usuário
+        function hashCode(s){ let h=2166136261>>>0; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619);} return h>>>0; }
+        function mulberry32(a){ return function(){ let t = a += 0x6D2B79F5; t = Math.imul(t ^ (t>>>15), t | 1); t ^= t + Math.imul(t ^ (t>>>7), t | 61); return ((t ^ (t>>>14)) >>> 0) / 4294967296; } }
+        const rng = mulberry32(hashCode(userKey));
+
+        function loadNetworks(){
+          try{ const o = JSON.parse(localStorage.getItem(LS_KEY)||'null'); if(o && typeof o==='object') return o; }catch(e){}
+          const state = {};
+          const RANGES = {
+            facebook:[20000,200000],
+            instagram:[50000,500000],
+            tiktok:[30000,600000],
+            youtube:[10000,300000],
+            twitch:[5000,80000],
+            twitter:[15000,250000],
+          };
+          NETWORKS.forEach(n=>{
+            const [min,max] = RANGES[n.id] || [10000,100000];
+            const followers = Math.floor(min + rng()*(max-min));
+            state[n.id] = {connected: true, followers}; // sempre conectadas
+          });
+          try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
+          return state;
+        }
+        function saveNetworks(s){ try{ localStorage.setItem(LS_KEY, JSON.stringify(s)); }catch(e){} }
+
+        let netState = loadNetworks();
+        function followersFmt(n){ try{ return Number(n||0).toLocaleString('pt-BR'); }catch(_){ return String(n||0); } }
+        function countConnected(){ return NETWORKS.length; }
+        function totalFollowers(){ return Object.values(netState).reduce((sum,x)=> sum + (x.followers||0), 0); }
+
+        // Tendências simuladas
+        const TRENDS_POOL = {
+          generic:['IA','Shorts','Reels','Podcast','Live','Storytime','Unboxing','Review','Tutorial','Challenge','Meme','#FYP','#ForYou','#Viral','#Trend','#News','#Games','#Música','#Tech','#Fashion'],
+          facebook:['Comunidades','Marketplace','Grupos','Reels','Eventos','Lives'],
+          instagram:['Reels','Explorar','Stories','Fashion','Makeup','Travel'],
+          tiktok:['Dance','Dueto','Lip Sync','Filtros','Challenges','FYP'],
+          youtube:['Shorts','Long-form','Podcasts','Vlogs','Reviews','Lives'],
+          twitch:['Lives','Stream','Clips','Chat','Subs','Drops'],
+          twitter:['Spaces','Threads','Hashtags','Trend Topics','X News']
+        };
+
+        function pickTrendsFor(id){
+          const base = new Set();
+          (TRENDS_POOL.generic.slice().sort(()=>Math.random()-0.5).slice(0,4) || []).forEach(t=>base.add(t));
+          const extra = (TRENDS_POOL[id]||[]).slice().sort(()=>Math.random()-0.5).slice(0,3);
+          extra.forEach(t=>base.add(t));
+          return Array.from(base).slice(0,5);
+        }
+
+        // Renderização de redes
+        function renderNetworks(){
+          const grid = document.getElementById('networksGrid');
+          grid.innerHTML = '';
+          NETWORKS.forEach(n=>{
+            const s = netState[n.id] || {connected:true, followers:0};
+            const wrap = document.createElement('div');
+            wrap.className = 'network-card';
+            wrap.innerHTML = `
+              <img src="${n.logo}" alt="${n.name}">
+              <div class="network-info">
+                <div class="network-title">${n.name}
+                  <span class="status" title="Status de conexão">
+                    <span class="dot on"></span>
+                    Conectado
+                  </span>
+                </div>
+                <div class="mini-label">Seguidores: <strong>${followersFmt(s.followers)}</strong></div>
+                <div class="trend">Em alta: <span id="trend-${n.id}">—</span></div>
+                <div style="margin-top:8px; display:flex; gap:8px; align-items:center">
+                  <button class="small-btn" data-bump="${n.id}" title="Simular ganho de seguidores">+ Seguidores</button>
+                </div>
+              </div>
+            `;
+            grid.appendChild(wrap);
+          });
+          // binds
+          grid.querySelectorAll('button[data-bump]').forEach(btn=>{
+            btn.addEventListener('click', ()=>{
+              const id = btn.getAttribute('data-bump');
+              const cur = netState[id] || {connected:false, followers:0};
+              cur.followers = Math.floor(cur.followers * (1.02 + Math.random()*0.05)) + 10; netState[id]=cur; saveNetworks(netState); renderSummary(); renderNetworks();
+            });
+          });
+        }
+
+        function renderSummary(){
+          document.getElementById('connectedCount').textContent = String(countConnected());
+          document.getElementById('totalFollowers').textContent = followersFmt(totalFollowers());
+        }
+
+        // ===== Métricas emocionais =====
+        function rnd(min,max){ return Math.floor(Math.random()*(max-min+1))+min }
+        function set(elPct, elVal){ return (v)=>{ elPct.style.width=v+'%'; elVal.textContent=v+'%'; } }
+        const updaters = [
+          set(document.getElementById('m1'), document.getElementById('m1v')),
+          set(document.getElementById('m2'), document.getElementById('m2v')),
+          set(document.getElementById('m3'), document.getElementById('m3v')),
+          set(document.getElementById('m4'), document.getElementById('m4v')),
+        ];
+        function updateMetrics(){ updaters.forEach(u=>u(rnd(10,95))); }
+
+        // ===== Tendências (agregado) =====
+        function aggregateTrends(){
+          // Mapa de termo -> { score, networks: Set(ids) }
+          const map = new Map();
+          NETWORKS.forEach(n=>{
+            const terms = pickTrendsFor(n.id);
+            terms.forEach(t=>{
+              const cur = map.get(t) || { score:0, networks:new Set() };
+              cur.score += 1 + Math.floor(Math.random()*3);
+              cur.networks.add(n.id);
+              map.set(t, cur);
+            });
+          });
+          const arr = Array.from(map.entries()).map(([term,info])=>({ term, score:info.score, networks:Array.from(info.networks) }));
+          arr.sort((a,b)=> b.score - a.score);
+          const top = arr.slice(0,6);
+          // Converter score em pessoas estimadas
+          return top.map(item=>{
+            const people = item.score * (800 + Math.floor(Math.random()*4200));
+            return { term:item.term, people, networks:item.networks };
+          });
+        }
+        function renderTrends(){
+          const list = document.getElementById('trendsList');
+          const data = aggregateTrends();
+          list.innerHTML = '';
+          data.forEach(item=>{
+            const row = document.createElement('div');
+            row.className = 'trend-item';
+            const logos = item.networks.map(id=>{
+              const n = NETWORKS.find(x=>x.id===id);
+              return n ? `<img src="${n.logo}" alt="${n.name}" title="${n.name}">` : '';
+            }).join('');
+            const verb = 'pessoas buscando';
+            row.innerHTML = `
+              <span class="term">${item.term}</span>
+              <span class="trend-right">
+                <span class="trend-logos" aria-label="Redes onde está em alta">${logos}</span>
+                <span class="volume">${verb}: ${followersFmt(item.people)}</span>
+              </span>
+            `;
+            list.appendChild(row);
+          });
+        }
+        function renderPerNetworkTrends(){
+          NETWORKS.forEach(n=>{
+            const el = document.getElementById('trend-'+n.id);
+            if(!el) return;
+            el.textContent = pickTrendsFor(n.id).slice(0,3).join(', ');
+          });
+        }
+
+        // ===== Frequência de atualização =====
+        const freqLabel = document.getElementById('freqLabel');
+        const LABELS = {realtime:'Tempo real','60000':'1 minuto','300000':'5 minutos','1800000':'30 minutos','3600000':'1 hora'};
+        let timerId = null;
+        const freqButtons = Array.from(document.querySelectorAll('.freq-btn'));
+        function getCurrentFreq(){
+          const active = document.querySelector('.freq-btn.active');
+          return active ? active.getAttribute('data-freq') : 'realtime';
+        }
+        function schedule(){
+          if(timerId) { clearInterval(timerId); timerId=null; }
+          const v = getCurrentFreq();
+          freqLabel.textContent = LABELS[v] || 'Tempo real';
+          const interval = (v==='realtime') ? 2500 : parseInt(v,10)||2500;
+          updateMetrics(); renderTrends(); renderPerNetworkTrends();
+          timerId = setInterval(()=>{ updateMetrics(); renderTrends(); renderPerNetworkTrends(); }, interval);
+        }
+        // carregar freq salva e binds
+        (function initFreq(){
+          let saved = 'realtime';
+          try{ saved = localStorage.getItem(LS_FREQ) || 'realtime'; }catch(e){}
+          let applied = false;
+          freqButtons.forEach(btn=>{
+            if(btn.getAttribute('data-freq')===String(saved)) { btn.classList.add('active'); applied=true; }
+            btn.addEventListener('click', ()=>{
+              freqButtons.forEach(b=>b.classList.remove('active'));
+              btn.classList.add('active');
+              try{ localStorage.setItem(LS_FREQ, btn.getAttribute('data-freq')); }catch(e){}
+              schedule();
+            });
+          });
+          if(!applied) { const first = freqButtons[0]; if(first){ first.classList.add('active'); } }
+        })();
+
+        // Inicialização
+  renderSummary();
+  renderNetworks();
+  schedule();
+        document.getElementById('logoutBtn').addEventListener('click', (e)=>{ try{ localStorage.removeItem('lumari_user'); }catch(e){} });
+      }, 100);
+    })();
+  </script>
+</body>
+</html>

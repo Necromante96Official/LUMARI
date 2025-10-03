@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no,email=no,address=no">
+  <title>Criar Conta — LUMARI</title>
+  <meta name="description" content="Crie sua conta gratuita na LUMARI e personalize sua experiência emocional.">
+  <meta name="theme-color" content="#7c4dff">
+  <link rel="icon" href="../logo/logo.jpg">
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    .auth-wrapper{min-height:60vh;display:grid;place-items:center;padding:20px}
+    .auth-card{width:100%;max-width:480px;background:linear-gradient(180deg,rgba(255,255,255,0.03),transparent);border:1px solid rgba(255,255,255,0.07);box-shadow:0 8px 40px rgba(6,3,12,0.6);border-radius:16px;padding:20px}
+    .auth-title{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+    .auth-title img{height:28px;width:28px;border-radius:6px}
+    .auth-sub{color:var(--muted);font-size:14px;margin-bottom:16px}
+    .form-grid{display:grid;gap:12px}
+    .form-field{display:flex;flex-direction:column;gap:6px}
+    .form-field label{font-size:14px;color:#ddd}
+    .form-field input{padding:12px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.16);border-radius:10px;color:#fff;outline:none;transition:all .25s}
+    .form-field input:focus{border-color:rgba(124,77,255,0.6);box-shadow:0 0 0 3px rgba(124,77,255,0.15)}
+    .btn{margin-top:16px;padding:12px 16px;border-radius:12px;border:1px solid rgba(124,77,255,0.4);background:linear-gradient(180deg,rgba(124,77,255,0.3),rgba(94,60,255,0.18));color:#fff;cursor:pointer;transition:transform .08s ease, filter .2s}
+    .btn:hover{filter:brightness(1.05)}
+    .btn:active{transform:scale(.98)}
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Pular para conteúdo</a>
+  <header class="topbar" role="banner" aria-label="Barra de navegação">
+    <div class="topbar-inner">
+      <a href="../index.html" class="brand-mini" aria-label="LUMARI home">
+        <img src="../logo/logo.jpg" alt="LUMARI" class="logo-mini">
+      </a>
+  <nav class="nav" role="navigation" aria-label="Menu principal">
+    <a href="about.html">Quem somos?</a>
+  <a href="features.html">Funcionalidades</a>
+  <a href="credits.html">Créditos</a>
+  </nav>
+    </div>
+  </header>
+
+  <button id="audioToggle" class="audio-toggle" aria-pressed="false" aria-label="Ativar som">🔊</button>
+
+  <main id="main" class="container">
+    <section class="auth-wrapper intro">
+      <div class="auth-card">
+        <div class="auth-title">
+          <img src="../logo/logo.jpg" alt="LUMARI">
+          <h1>Criar Conta</h1>
+        </div>
+  <p class="auth-sub">Preencha os dados para começar a usar o LUMARI.</p>
+        <form id="signupForm" class="form-grid">
+          <div class="form-field">
+            <label for="fullname">Nome Completo</label>
+            <input type="text" id="fullname" name="fullname" required placeholder="Seu nome completo">
+          </div>
+          <div class="form-field">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" required placeholder="voce@email.com">
+          </div>
+          <div class="form-field">
+            <label for="password">Senha</label>
+            <input type="password" id="password" name="password" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn">Criar Conta</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script defer src="../js/main.js"></script>
+  <script>
+    (function(){
+      const form = document.getElementById('signupForm');
+      const params = new URLSearchParams(location.search);
+      const role = params.get('role') === 'creator' ? 'creator' : 'public';
+      function saveLocalDb(db){ try{ localStorage.setItem('lumari_users', JSON.stringify(db)); }catch(e){} }
+      form.addEventListener('submit', function(ev){
+        ev.preventDefault();
+        try{ if(window.lumariPlayClick) window.lumariPlayClick(); }catch(e){}
+        const name = (document.getElementById('fullname').value||'').trim() || 'Usuário';
+        const email = (document.getElementById('email').value||'').trim();
+        const password = (document.getElementById('password').value||'').trim();
+        if(!email || !password){ return; }
+        (function(){
+          let db = [];
+          try{ db = JSON.parse(localStorage.getItem('lumari_users')||'[]'); }catch(e){ db = []; }
+          if(!Array.isArray(db)) db = [];
+          const idx = db.findIndex(u=>String(u.email).toLowerCase()===String(email).toLowerCase());
+          const record = { email, name, role, password };
+          if(idx>=0){ db[idx] = record; } else { db.push(record); }
+          saveLocalDb(db);
+          try{ localStorage.setItem('lumari_user', JSON.stringify({ email, name, role })); }catch(e){}
+          try{
+            const list = JSON.parse(localStorage.getItem('lumari_emails')||'[]');
+            if(!list.includes(email)) list.push(email);
+            localStorage.setItem('lumari_emails', JSON.stringify(list));
+          }catch(e){}
+          // Após signup direcionar para seleção de humor diária (force=1 evita pular)
+          const target = role === 'creator' ? 'home-creator.html' : 'home-public.html?force=1';
+          // Após cadastro, abrir a página alvo com reload completo, mas garantir que os termos sejam apresentados
+          try{
+            if(typeof createTermsModal === 'function'){
+              // criar modal e aguardar aceite
+              createTermsModal(role);
+              const onAccept = ()=>{
+                document.removeEventListener('lumari:termsAccepted', onAccept);
+                document.removeEventListener('lumari:termsDeclined', onDecline);
+                try{
+                  if(typeof window.pjaxLoad === 'function'){
+                    window.pjaxLoad(target, true);
+                  } else {
+                    window.location.href = target;
+                  }
+                }catch(_){ window.location.href = target; }
+              };
+              const onDecline = ()=>{
+                document.removeEventListener('lumari:termsAccepted', onAccept);
+                document.removeEventListener('lumari:termsDeclined', onDecline);
+                // não redireciona; a tela de negação será exibida pelo main.js (se existir)
+              };
+              document.addEventListener('lumari:termsAccepted', onAccept);
+              document.addEventListener('lumari:termsDeclined', onDecline);
+            } else {
+              // Sem modal de termos: tentar expor depois de um pequeno atraso, senão seguir
+              setTimeout(()=>{
+                try{
+                    if(typeof createTermsModal === 'function'){
+                    createTermsModal(role);
+                    const onAccept = ()=>{
+                      document.removeEventListener('lumari:termsAccepted', onAccept);
+                      document.removeEventListener('lumari:termsDeclined', onDecline);
+                        try{
+                          if(typeof window.pjaxLoad === 'function'){
+                            window.pjaxLoad(target, true);
+                          } else {
+                            window.location.href = target;
+                          }
+                        }catch(_){ window.location.href = target; }
+                    };
+                    const onDecline = ()=>{
+                      document.removeEventListener('lumari:termsAccepted', onAccept);
+                      document.removeEventListener('lumari:termsDeclined', onDecline);
+                    };
+                    document.addEventListener('lumari:termsAccepted', onAccept);
+                    document.addEventListener('lumari:termsDeclined', onDecline);
+                  } else {
+                    try{
+                      if(typeof window.pjaxLoad === 'function'){
+                        window.pjaxLoad(target, true);
+                      } else {
+                        window.location.href = target;
+                      }
+                    }catch(_){ window.location.href = target; }
+                  }
+                }catch(e){ window.location.href = target; }
+              }, 100);
+            }
+          }catch(e){ window.location.href = target; }
+        })();
+      });
+    })();
+    // Inicializar tema e, ao carregar a próxima página via PJAX, o script em main.js cuidará de mostrar os termos se necessário.
+    try{ if(window.initTheme) window.initTheme(); }catch(e){}
+  // Exportador simples de e-mails (opcional): pressione Ctrl+E nesta página
+    document.addEventListener('keydown', function(e){
+      if(e.ctrlKey && (e.key==='e' || e.key==='E')){
+        e.preventDefault();
+        try{
+          const list = JSON.parse(localStorage.getItem('lumari_emails')||'[]');
+          const csv = 'email\n' + list.map(x=>`"${String(x).replaceAll('"','""')}"`).join('\n');
+          const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = 'lumari_emails.csv'; a.click();
+          URL.revokeObjectURL(url);
+        }catch(err){ alert('Não foi possível exportar.'); }
+      }
+    });
+  </script>
+</body>
+</html>
