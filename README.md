@@ -167,22 +167,22 @@ v0.1.5-alfa
 - Tendências em tempo real (mock) com mini-logos
 - Login/Signup usando `pjaxLoad` quando possível
 
-v0.1.4
+v0.1.4-alfa
 - Responsividade mobile aprimorada
 
-v0.1.3
+v0.1.3-alfa
 - Ajustes de grid/métricas criador
 
-v0.1.2
+v0.1.2-alfa
 - Termos de Uso (modal) + tela de recusa
 
-v0.1.1
+v0.1.1-alfa
 - Sons de clique
 
-v0.1.0
+v0.1.0-alfa
 - PJAX inicial mantendo áudio
 
-v0.0.x (0.0.9 → 0.0.1)
+v0.0.x (0.0.9 → 0.0.1)-alfa
 - Iterações iniciais: acessibilidade básica, visuais, feeds, autenticação mock
 
 v0.0.0-alfa
